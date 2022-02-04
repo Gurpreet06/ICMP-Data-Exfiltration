@@ -26,7 +26,10 @@ def get_colours(text, color):
 
 
 def data_passer(packet_info):
-    pass
+    if packet_info.haslayer(ICMP):
+        if packet_info[ICMP].type == 8:
+            byte_data = packet_info['ICMP'].load[-4:].decode('utf-8')
+            print(byte_data, flush=True, end='')
 
 
 if len(sys.argv) != 2:
