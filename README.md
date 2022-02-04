@@ -35,6 +35,8 @@ to the script, and it will automatically convert our data into "HEXADECIMAL" and
 ```bash
 ❯ sudo python3 icmp_exfiltration.py vmnet8
 
+[*] Listening for any incoming connections...
+
 127.0.0.1       localhost
 127.0.1.1       Gurpreet06                        
 ```
