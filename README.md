@@ -38,7 +38,7 @@ convert our data into "HEXADECIMAL" and send it to its destination.
 127.0.0.1       localhost
 127.0.1.1       Gurpreet06                        
 ```
-First we will run "icmp_exfiltration.py" file by specifying on which interface we want to listen.
+First we run the "icmp_exfiltration.py" file specifying which interface we want to listen on.
 
 #### icmp_sendData.py
 ```bash
