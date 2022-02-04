@@ -33,7 +33,7 @@ to the script, and it will automatically convert our data into "HEXADECIMAL" and
 ### Usage
 #### icmp_exfiltration.py
 ```bash
-❯ sudo python3 icmp_exfiltration.py vmnet8
+❯ sudo python3 icmp_exfiltration.py wlan0
 
 [*] Listening for any incoming connections...
 
