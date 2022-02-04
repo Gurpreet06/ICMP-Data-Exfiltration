@@ -35,7 +35,9 @@ def data_parser(packet_info):
 if len(sys.argv) != 2:
     print(f"\n{Fore.RED + '[!]'}", f"{Fore.WHITE + f'Usage {sys.argv[0]} <Interface-Name>'}")
 else:
+    get_colours("\n[*] Listening for any incoming connections.", 'blue')
     try:
+        print(Fore.WHITE)  # To avoid leaving the terminal with colors.
         sniff(iface=f'{sys.argv[1]}', prn=data_parser)
     except PermissionError:
         get_colours("\n[!] Run program with admin privilege", 'red')
