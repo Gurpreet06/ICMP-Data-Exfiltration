@@ -50,6 +50,6 @@ First we run the "icmp_exfiltration.py" file specifying which interface we want 
 
 [+] File sent successfully.                        
 ```
-Then from another host we will run the "icmp_sendData.py" and the destination "IP-Address" and "FILE NAME"
+Then from another host we will run the "icmp_sendData.py" script by providing the destination "IP-Address" and "FILE NAME"
 and it will automatically send  the file to another host terminal.
 
