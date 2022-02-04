@@ -25,7 +25,7 @@ def get_colours(text, color):
         print(red_color)
 
 
-def data_passer(packet_info):
+def data_parser(packet_info):
     if packet_info.haslayer(ICMP):
         if packet_info[ICMP].type == 8:
             byte_data = packet_info['ICMP'].load[-4:].decode('utf-8')
@@ -36,7 +36,7 @@ if len(sys.argv) != 2:
     print(f"\n{Fore.RED + '[!]'}", f"{Fore.WHITE + f'Usage {sys.argv[0]} <Interface-Name>'}")
 else:
     try:
-        sniff(iface=f'{sys.argv[1]}', prn=data_passer)
+        sniff(iface=f'{sys.argv[1]}', prn=data_parser)
     except PermissionError:
         get_colours("\n[!] Run program with admin privilege", 'red')
     except OSError:
