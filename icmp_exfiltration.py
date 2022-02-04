@@ -7,7 +7,7 @@ from colorama import Fore
 
 
 def ctrl_c(signum, frame):
-    get_colours("\n[*] Exiting the program...", "blue")
+    get_colours("\n\n[*] Exiting the program...", "blue")
     time.sleep(1)
     exit(1)
 
