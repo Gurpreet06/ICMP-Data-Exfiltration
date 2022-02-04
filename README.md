@@ -36,12 +36,7 @@ convert our data into "HEXADECIMAL" and send it to its destination.
 ❯ sudo python3 icmp_exfiltration.py vmnet8
 
 127.0.0.1       localhost
-127.0.1.1       kali
-
-# The following lines are desirable for IPv6 capable hosts
-::1     localhost ip6-localhost ip6-loopback
-ff02::1 ip6-allnodes
-ff02::2 ip6-allrouters                         
+127.0.1.1       Gurpreet06                        
 ```
 First we will run "icmp_exfiltration.py" file by specifying on which interface we want to listen.
 
