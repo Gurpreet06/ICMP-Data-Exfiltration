@@ -23,3 +23,18 @@ def get_colours(text, color):
     elif color == "red":
         red_color = Fore.RED + text
         print(red_color)
+
+
+def data_passer(packet_info):
+    pass
+
+
+if len(sys.argv) != 2:
+    print(f"\n{Fore.RED + '[!]'}", f"{Fore.WHITE + f'Usage {sys.argv[0]} <Interface-Name>'}")
+else:
+    try:
+        sniff(iface=f'{sys.argv[1]}', prn=data_passer)
+    except PermissionError:
+        get_colours("\n[!] Run program with admin privilege", 'red')
+    except OSError:
+        get_colours("\n[!] No such interface found", 'red')
