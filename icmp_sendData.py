@@ -26,3 +26,13 @@ def get_colours(text, color):
     elif color == "blue":
         blue_color = Fore.BLUE + text
         print(blue_color)
+
+
+def send_file(ip_address, file_name):
+    pass
+
+
+if len(sys.argv) != 3:
+    print(f"\n{Fore.RED + '[!]'}", f"{Fore.WHITE + f'Usage {sys.argv[0]} <IP-Address> <File-Name>'}")
+else:
+    send_file(sys.argv[1], sys.argv[2])
