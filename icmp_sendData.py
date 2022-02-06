@@ -39,6 +39,6 @@ def send_file(ip_address, file_name):
 
 
 if len(sys.argv) != 3:
-    print(f"\n{Fore.RED + '[!]'}", f"{Fore.WHITE + f'Usage {sys.argv[0]} <IP-Address> <File-Name>'}")
+    print(f"\n[{Fore.RED + '!'}{Fore.WHITE + ']'}", f"{Fore.WHITE + f'Usage {sys.argv[0]} <IP-Address> <File-Name>'}")
 else:
     send_file(sys.argv[1], sys.argv[2])

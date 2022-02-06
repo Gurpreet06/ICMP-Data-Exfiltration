@@ -33,7 +33,7 @@ def data_parser(packet_info):
 
 
 if len(sys.argv) != 2:
-    print(f"\n{Fore.RED + '[!]'}", f"{Fore.WHITE + f'Usage {sys.argv[0]} <Interface-Name>'}")
+    print(f"\n[{Fore.RED + '!'}{Fore.WHITE + ']'}", f"{Fore.WHITE + f'Usage {sys.argv[0]} <Interface-Name>'}")
 else:
     try:
         get_colours("\n[*] Listening for any incoming connections...", 'blue')
