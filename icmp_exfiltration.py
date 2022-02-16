@@ -7,7 +7,7 @@ from colorama import Fore
 
 
 def ctrl_c(signum, frame):
-    get_colours("\n\n[*] Exiting the program...", "blue")
+    get_colours("\n\n[*] Exiting the program...\n", "blue")
     time.sleep(1)
     exit(1)
 
@@ -36,10 +36,12 @@ if len(sys.argv) != 2:
     print(f"\n[{Fore.RED + '!'}{Fore.WHITE + ']'}", f"{Fore.WHITE + f'Usage {sys.argv[0]} <Interface-Name>'}")
 else:
     try:
-        get_colours("\n[*] Listening for any incoming connections...", 'blue')
+        get_colours("\n[*] Listening for any incoming connections...\n", 'blue')
         print(Fore.WHITE)  # To avoid leaving the terminal with colors.
         sniff(iface=f'{sys.argv[1]}', prn=data_parser)
     except PermissionError:
-        get_colours("\n[!] Run program with admin privilege", 'red')
+        get_colours("\n[!] Run program with admin privilege\n", 'red')
+        print(Fore.WHITE)
     except OSError:
-        get_colours("\n[!] No such interface found", 'red')
+        get_colours("\n[!] No such interface found\n", 'red')
+        print(Fore.WHITE)
