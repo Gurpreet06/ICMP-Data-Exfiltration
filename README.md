@@ -4,6 +4,16 @@ This program is used to send data over the network within "ICMP Packets", with t
 we can send any type of file over the network between two hosts with the help of this script.
 
 
+## Requirements
+Need to have the [Scapy] library installed to sniff packets on the network.
+
+### Installations
+```bash 
+
+pip3 install scapy
+
+```
+
 ## Examples of How To Use
 The program works with two files.
 
