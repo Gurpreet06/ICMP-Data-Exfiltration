@@ -33,9 +33,11 @@ def send_file(ip_address, file_name):
     get_colours("\n[+] Trying to send file...", 'blue')
     check_output = subprocess.run([file_load], shell=True, capture_output=True, text=True)
     if 'No such file or directory' in str(check_output):
-        get_colours('\n[!] Indicate file not found, check file name.', 'red')
+        get_colours('\n[!] Indicate file not found, check file name.\n', 'red')
+        print(Fore.WHITE) # To avoid leaving the terminal with colours.
     else:
-        get_colours("\n[+] File sent successfully.", 'green')
+        get_colours("\n[+] File sent successfully.\n", 'green')
+        print(Fore.WHITE)
 
 
 if len(sys.argv) != 3:
