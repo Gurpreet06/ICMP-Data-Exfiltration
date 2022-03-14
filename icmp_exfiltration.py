@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import signal
+import subprocess
 import sys
 import time
 from scapy.all import *
@@ -37,6 +38,12 @@ if len(sys.argv) != 2:
           f"{Fore.YELLOW + f' Usage {sys.argv[0]} <Interface-Name>'}")
 else:
     try:
+        check_scapy = subprocess.run(["which", "scapy"], capture_output=True, text=True)
+        if "/usr/bin/scapy" not in check_scapy:
+            print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
+                  f"{Fore.RED + ' Scapy not found on the system.'}")
+            print(f"\n{Fore.BLUE + '┃'}  {Fore.YELLOW + ' sudo apt install python3-scapy'}")
+            exit()
         print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
               f"{Fore.BLUE + '  Listening for any incoming connections...'}")
         print(Fore.WHITE)  # To avoid leaving the terminal with colors.
