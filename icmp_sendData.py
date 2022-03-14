@@ -38,7 +38,8 @@ def send_file(ip_address, file_name):
               f"{Fore.RED + ' Indicate file not found, check file name.'}")
         print(Fore.WHITE) # To avoid leaving the terminal with colours.
     else:
-        get_colours("\n[+] File sent successfully.\n", 'green')
+        print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
+              f"{Fore.BLUE + '  File sent successfully'}")
         print(Fore.WHITE)
 
 
