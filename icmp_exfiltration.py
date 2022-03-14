@@ -8,7 +8,8 @@ import time
 
 
 def ctrl_c(signum, frame):
-    get_colours("\n\n[*] Exiting the program...\n", "blue")
+    print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
+          f"{Fore.BLUE + '  Exiting the program...'}")
     time.sleep(1)
     exit(1)
 

@@ -7,7 +7,8 @@ from colorama import Fore
 
 
 def ctrl_c(signum, frame):
-    get_colours("\n[*] Exiting the program...", "blue")
+    print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
+          f"{Fore.BLUE + '  Exiting the program...'}")
     time.sleep(1)
     exit(1)
 
