@@ -33,7 +33,8 @@ def data_parser(packet_info):
 
 
 if len(sys.argv) != 2:
-    print(f"\n[{Fore.RED + '!'}{Fore.WHITE + ']'}", f"{Fore.WHITE + f'Usage {sys.argv[0]} <Interface-Name>'}")
+    print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
+          f"{Fore.YELLOW + f' Usage {sys.argv[0]} <Interface-Name>'}")
 else:
     try:
         print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
