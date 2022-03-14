@@ -37,20 +37,20 @@ to the script, and it will automatically convert our data into "HEXADECIMAL" and
 ```bash
 ❯ sudo python3 icmp_exfiltration.py
 
-┃  [!] Usage icmp_exfiltration.py <Interface-Name>                             
+┃  [!] Usage icmp_exfiltration.py <Interface-Name> <File-name to save data>                         
 ```
 
 #### icmp_sendData.py
 ```bash
 ❯ sudo python3 icmp_sendData.py
 
-┃  [!] Usage icmp_sendData.py <IP-Address> <File-Name>                       
+┃  [!] Usage ../ICMP-Data-Exfiltration/icmp_sendData.py <IP-Address> <File-Name to send over the network>
 ```
 
 ### Usage
 #### icmp_exfiltration.py
 ```bash
-❯ sudo python3 icmp_exfiltration.py wlan0
+❯ sudo python3 icmp_exfiltration.py wlan0 data.txt
                                                                                                                                                                                       
 ┃  [*]  Listening for any incoming connections...                                                                                                                                         
                                                                                                                                                                                           

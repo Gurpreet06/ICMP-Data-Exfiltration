@@ -55,7 +55,7 @@ def send_file(ip_address, file_name):
 
 if len(sys.argv) != 3:
     print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
-          f"{Fore.YELLOW + f' Usage {sys.argv[0]} <IP-Address> <File-Name>'}")
+          f"{Fore.YELLOW + f' Usage {sys.argv[0]} <IP-Address> <File-Name to send over the network>'}")
 else:
     scan_host = subprocess.run([f"timeout 1 ping -c 1 {sys.argv[1]}"], stdout=subprocess.PIPE, shell=True)
     split_ttl = str(scan_host).split()
