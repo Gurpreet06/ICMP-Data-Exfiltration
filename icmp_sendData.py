@@ -47,4 +47,10 @@ if len(sys.argv) != 3:
     print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
           f"{Fore.YELLOW + f' Usage {sys.argv[0]} <IP-Address> <File-Name>'}")
 else:
-    send_file(sys.argv[1], sys.argv[2])
+    try:
+        send_file(sys.argv[1], sys.argv[2])
+    except ModuleNotFoundError:
+        print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
+              f"{Fore.BLUE + ' Scapy not found installed on the system'}")
+        print(f"\n{Fore.BLUE + '┃'}  {Fore.YELLOW + ' pip3 install scapy'}")
+        
