@@ -48,3 +48,7 @@ else:
     except OSError:
         get_colours("\n[!] No such interface found\n", 'red')
         print(Fore.WHITE)
+    except ModuleNotFoundError:
+        print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
+              f"{Fore.BLUE + ' Scapy not found installed on the system'}")
+        print(f"\n{Fore.BLUE + '┃'}  {Fore.YELLOW + ' pip3 install scapy'}")
