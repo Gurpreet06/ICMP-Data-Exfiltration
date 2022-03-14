@@ -13,6 +13,12 @@ Need to have the [Scapy] library installed to sniff packets on the network.
 pip3 install scapy
 
 ```
+or
+```bash 
+
+sudo apt install python3-scapy
+
+```
 
 ## Examples of How To Use
 The program works with two files.
