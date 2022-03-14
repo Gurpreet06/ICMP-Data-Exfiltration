@@ -31,12 +31,14 @@ def data_parser(packet_info):
     if packet_info.haslayer(ICMP):
         if packet_info[ICMP].type == 8:
             byte_data = packet_info['ICMP'].load[-4:].decode('utf-8', errors="backslashreplace")
-            print(byte_data, flush=True, end='')
+            a = open(f'{sys.argv[2]}.txt', 'a')
+            a.write(byte_data)
+            a.close()
 
 
-if len(sys.argv) != 2:
+if len(sys.argv) != 3:
     print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
-          f"{Fore.YELLOW + f' Usage {sys.argv[0]} <Interface-Name>'}")
+          f"{Fore.YELLOW + f' Usage {sys.argv[0]} <Interface-Name> <File-name to save data>'}")
 else:
     check_interface = subprocess.check_output("ip a | grep '%s' | awk '{print $2}' | grep"
                                               " '%s' | awk '{print $1}' FS=':'" % (
@@ -55,4 +57,6 @@ else:
         print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
               f"{Fore.BLUE + '  Listening for any incoming connections...'}")
         print(Fore.WHITE)  # To avoid leaving the terminal with colors.
+        print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
+              f"{Fore.BLUE + '  Saving data to file'}")
         sniff(iface=f'{sys.argv[1]}', prn=data_parser)
