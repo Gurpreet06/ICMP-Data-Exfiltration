@@ -31,24 +31,21 @@ def data_parser(packet_info):
             byte_data = packet_info['ICMP'].load[-4:].decode('utf-8')
             print(byte_data, flush=True, end='')
 
-try:
-    if len(sys.argv) != 2:
-        print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
-              f"{Fore.YELLOW + f' Usage {sys.argv[0]} <Interface-Name>'}")
-    else:
-        try:
-            print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
-                      f"{Fore.BLUE + '  Listening for any incoming connections...'}")
-            print(Fore.WHITE)  # To avoid leaving the terminal with colors.
-            sniff(iface=f'{sys.argv[1]}', prn=data_parser)
-        except PermissionError:
-            print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
-                  f"{Fore.RED + ' Run this script with administrator privileges.'}")
-            print(Fore.WHITE)
-        except OSError:
-            get_colours("\n[!] No such interface found\n", 'red')
-            print(Fore.WHITE)
-except ModuleNotFoundError:
+
+if len(sys.argv) != 2:
     print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
-          f"{Fore.BLUE + ' Scapy not found installed on the system'}")
-    print(f"\n{Fore.BLUE + '┃'}  {Fore.YELLOW + ' pip3 install scapy'}")
+          f"{Fore.YELLOW + f' Usage {sys.argv[0]} <Interface-Name>'}")
+else:
+    try:
+        print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
+              f"{Fore.BLUE + '  Listening for any incoming connections...'}")
+        print(Fore.WHITE)  # To avoid leaving the terminal with colors.
+        sniff(iface=f'{sys.argv[1]}', prn=data_parser)
+    except PermissionError:
+        print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
+              f"{Fore.RED + ' Run this script with administrator privileges.'}")
+        print(Fore.WHITE)
+    except OSError:
+        print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
+              f"{Fore.RED + '  No such interface found'}")
+        print(Fore.WHITE)
