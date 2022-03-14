@@ -36,11 +36,13 @@ if len(sys.argv) != 2:
     print(f"\n[{Fore.RED + '!'}{Fore.WHITE + ']'}", f"{Fore.WHITE + f'Usage {sys.argv[0]} <Interface-Name>'}")
 else:
     try:
-        get_colours("\n[*] Listening for any incoming connections...\n", 'blue')
+        print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
+                  f"{Fore.BLUE + '  Listening for any incoming connections...'}")
         print(Fore.WHITE)  # To avoid leaving the terminal with colors.
         sniff(iface=f'{sys.argv[1]}', prn=data_parser)
     except PermissionError:
-        get_colours("\n[!] Run program with admin privilege\n", 'red')
+        print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
+              f"{Fore.RED + ' Run this script with administrator privileges.'}")
         print(Fore.WHITE)
     except OSError:
         get_colours("\n[!] No such interface found\n", 'red')
