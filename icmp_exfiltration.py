@@ -34,6 +34,7 @@ def data_parser(packet_info):
             a = open(f'{sys.argv[2]}.txt', 'a')
             a.write(byte_data)
             a.close()
+            print(byte_data, flush=True, end='')
 
 
 if len(sys.argv) != 3:
@@ -56,7 +57,7 @@ else:
     else:
         print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
               f"{Fore.BLUE + '  Listening for any incoming connections...'}")
-        print(Fore.WHITE)  # To avoid leaving the terminal with colors.
         print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
               f"{Fore.BLUE + '  Saving data to file'}")
+        print(Fore.WHITE)  # To avoid leaving the terminal with colors.
         sniff(iface=f'{sys.argv[1]}', prn=data_parser)
