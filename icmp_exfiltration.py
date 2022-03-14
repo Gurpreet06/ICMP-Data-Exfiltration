@@ -40,7 +40,12 @@ else:
         print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
                   f"{Fore.BLUE + '  Listening for any incoming connections...'}")
         print(Fore.WHITE)  # To avoid leaving the terminal with colors.
-        sniff(iface=f'{sys.argv[1]}', prn=data_parser)
+        try:
+            sniff(iface=f'{sys.argv[1]}', prn=data_parser)
+        except ModuleNotFoundError:
+            print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
+                  f"{Fore.BLUE + ' Scapy not found installed on the system'}")
+            print(f"\n{Fore.BLUE + '┃'}  {Fore.YELLOW + ' pip3 install scapy'}")
     except PermissionError:
         print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
               f"{Fore.RED + ' Run this script with administrator privileges.'}")
@@ -48,7 +53,3 @@ else:
     except OSError:
         get_colours("\n[!] No such interface found\n", 'red')
         print(Fore.WHITE)
-    except ModuleNotFoundError:
-        print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
-              f"{Fore.BLUE + ' Scapy not found installed on the system'}")
-        print(f"\n{Fore.BLUE + '┃'}  {Fore.YELLOW + ' pip3 install scapy'}")
