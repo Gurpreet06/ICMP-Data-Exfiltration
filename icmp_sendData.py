@@ -3,6 +3,7 @@ import subprocess
 import sys
 import time
 import signal
+import re
 from colorama import Fore
 
 
@@ -48,4 +49,19 @@ if len(sys.argv) != 3:
     print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
           f"{Fore.YELLOW + f' Usage {sys.argv[0]} <IP-Address> <File-Name>'}")
 else:
-    send_file(sys.argv[1], sys.argv[2])
+    scan_host = subprocess.run([f"timeout 1 ping -c 1 {sys.argv[1]}"], stdout=subprocess.PIPE, shell=True)
+    split_ttl = str(scan_host).split()
+    try:
+        get_ttl_size = split_ttl[18]
+        ttl_value = re.findall(r"\d{1,3}", get_ttl_size)[0]
+        if "returncode=0" in str(scan_host):
+            if int(ttl_value) >= 0 and int(ttl_value) <= 64:
+                print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
+                      f"{Fore.BLUE + '  Hosts active,'} {Fore.YELLOW + ' Linux system'}")
+            elif int(ttl_value) >= 65 and int(ttl_value) <= 128:
+                print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
+                      f"{Fore.BLUE + '  Hosts active,'} {Fore.YELLOW + ' Windows system'}")
+        send_file(sys.argv[1], sys.argv[2])
+    except IndexError:
+        print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
+              f"{Fore.RED + ' Host is not active.'}")
