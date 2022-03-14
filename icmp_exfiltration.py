@@ -30,7 +30,7 @@ def get_colours(text, color):
 def data_parser(packet_info):
     if packet_info.haslayer(ICMP):
         if packet_info[ICMP].type == 8:
-            byte_data = packet_info['ICMP'].load[-4:].decode('utf-8')
+            byte_data = packet_info['ICMP'].load[-4:].decode('utf-8', errors="backslashreplace")
             print(byte_data, flush=True, end='')
 
 

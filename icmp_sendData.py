@@ -5,6 +5,7 @@ import time
 import signal
 import re
 from colorama import Fore
+from tqdm import tqdm
 
 
 def ctrl_c(signum, frame):
@@ -40,6 +41,13 @@ def send_file(ip_address, file_name):
               f"{Fore.RED + ' Indicate file not found, check file name.'}")
         print(Fore.WHITE) # To avoid leaving the terminal with colours.
     else:
+        get_file_length = 0
+        with open(f"{sys.argv[2]}", "r") as f:
+            get_file_length = len(f.readlines())
+        progess_bar = 0
+        print()
+        for i in tqdm(range(get_file_length * 10000)):
+            progess_bar += i
         print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
               f"{Fore.BLUE + '  File sent successfully'}")
         print(Fore.WHITE)
