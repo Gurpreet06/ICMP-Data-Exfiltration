@@ -66,7 +66,7 @@ def send_file(ip_address, file_name):
     check_output = subprocess.run([file_load], shell=True, capture_output=True, text=True)
     if 'No such file or directory' in str(check_output):
         print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
-              f"{Fore.RED + ' Indicate file dosen\'t exist, check file name.'}")
+              f"{Fore.RED + ' Indicate file dosent exist, check file name.'}")
         print(Fore.WHITE)  # To avoid leaving the terminal with colours.
     else:
         get_file_length = 0
