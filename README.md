@@ -70,7 +70,7 @@ sudo python3 icmp_exfiltration.py -i wlan0 -m recv -f mydata
 
 #### Sending data
 ```bash
-❯ sudo python3 icmp_exfiltration.py -i 127.0.0.1 -m send -f /etc/passwd
+❯ sudo python3 icmp_exfiltration.py -i 127.0.0.1 -m send -f /etc/hosts
 
 ┃  [*]  Hosts active,  Linux system
 
