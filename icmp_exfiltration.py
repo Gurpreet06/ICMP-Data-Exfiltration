@@ -79,11 +79,12 @@ def send_file(ip_address, file_name):
 
 
 def check_permisson():
-    if os.getuid() != 0:
-        print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
-              f"{Fore.RED + ' Run this script with administrator privileges.'}")
-        exit()
     if sys.argv[4] == 'recv':
+        if os.getuid() != 0:
+            print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
+                  f"{Fore.RED + ' Run this script with administrator privileges.'}")
+            exit()
+
         check_interface_exist = subprocess.check_output(
             "ip a | grep '%s' | awk '{print $2}' | grep"
             " '%s' | awk '{print $1}' FS=':'" % (
@@ -165,6 +166,9 @@ def check_parms():
                                         print(
                                             f"\n{Fore.RED + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + '] '}"
                                             f"{Fore.YELLOW + 'Missing Filename.'}")
+                                else:
+                                    print(f"\n{Fore.RED + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + '] '}"
+                                          f"{Fore.YELLOW + 'Missing the [-f] parameter.'}")
                             else:
                                 print(f"\n{Fore.RED + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + '] '}"
                                       f"{Fore.YELLOW + 'Missing the [-f] parameter.'}")
