@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 from scapy.all import *
 from colorama import Fore
+from tqdm import tqdm
 import signal
 import subprocess
 import sys
 import time
 import re
-from tqdm import tqdm
 import ipaddress
 
 
@@ -28,11 +28,14 @@ def get_colours(text, color):
     elif color == "red":
         red_color = Fore.RED + text
         print(red_color)
+    elif color == "green":
+        red_color = Fore.GREEN + text
+        print(red_color)
 
 
 def menu_panel():
     get_colours(f"\n[{Fore.RED + '!'}{Fore.GREEN + ''}] Usage: sudo python3 " + sys.argv[0] + "-i <Adaptor name / IP Address> -m <Mode> -f <Filename>", "green")
-    get_colours("――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――", 'red')
+    get_colours("――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――", 'red')
     print(f"\n{Fore.BLUE + '┃'}  {Fore.MAGENTA + '[-i]'}{Fore.YELLOW + ' Network Adaptor name'}")
     print("")
     print(f"{Fore.BLUE + '┃'}  {Fore.MAGENTA + '[-m]'}{Fore.YELLOW + ' Mode to use'}")
