@@ -83,4 +83,7 @@ sudo python3 icmp_exfiltration.py -i wlan0 -m recv -f mydata
 
 ## Test
 
-https://user-images.githubusercontent.com/74554439/158271576-cd6a262e-fb1e-41b7-afbd-19e7f231143a.mp4
+https://user-images.githubusercontent.com/74554439/158383077-c02c0ac6-f7a5-4002-836d-d07e8c91b226.mp4
+
+
+
