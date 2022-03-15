@@ -31,9 +31,7 @@ def get_colours(text, color):
 
 
 def menu_panel():
-    get_colours(f"\n[{Fore.RED + '!'}{Fore.GREEN + ''}] Usage: sudo python3 " + sys.argv[0] + "-i <Adaptor name / IP "
-                                                                                              "Address> -m <Mode> -f "
-                                                                                              "<Filename>", "green")
+    get_colours(f"\n[{Fore.RED + '!'}{Fore.GREEN + ''}] Usage: sudo python3 " + sys.argv[0] + "-i <Adaptor name / IP Address> -m <Mode> -f <Filename>", "green")
     get_colours("――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――", 'red')
     print(f"\n{Fore.BLUE + '┃'}  {Fore.MAGENTA + '[-i]'}{Fore.YELLOW + ' Network Adaptor name'}")
     print("")
