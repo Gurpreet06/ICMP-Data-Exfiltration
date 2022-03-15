@@ -53,10 +53,10 @@ def data_parser(packet_info):
     if packet_info.haslayer(ICMP):
         if packet_info[ICMP].type == 8:
             byte_data = packet_info['ICMP'].load[-4:].decode('utf-8', errors="backslashreplace")
+            print(byte_data, flush=True, end='')
             a = open(f'{sys.argv[6]}.txt', 'a')
             a.write(byte_data)
             a.close()
-            print(byte_data, flush=True, end='')
 
 
 def send_file(ip_address, file_name):
@@ -66,7 +66,7 @@ def send_file(ip_address, file_name):
     check_output = subprocess.run([file_load], shell=True, capture_output=True, text=True)
     if 'No such file or directory' in str(check_output):
         print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
-              f"{Fore.RED + ' Indicate file not found, check file name.'}")
+              f"{Fore.RED + ' Indicate file dosen\'t exist, check file name.'}")
         print(Fore.WHITE)  # To avoid leaving the terminal with colours.
     else:
         get_file_length = 0
