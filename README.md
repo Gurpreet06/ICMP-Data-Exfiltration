@@ -23,11 +23,13 @@ sudo apt install python3-scapy
 ## Examples of How To Use
 The program has two modes.
 
+### RECV
 First one "RECV", we will use this mode as a receiver by running this mode we will automatically
 start listening for any "ICMP packets" that are coming towards our host machine, once we start receiving packets
 this script will automatically decode the message and print it to the display and also in the same time the script
 will save the output to indicate file.
 
+### SEND
 Second mode "SEND", with the help of this mode we can send any type of file we want to another host 
 where it is listening for our communication, we just need to provide the destination "IP-Address" and "FILE NAME" 
 to the script, and it will automatically convert our data into "HEXADECIMAL" and send it to its destination.
