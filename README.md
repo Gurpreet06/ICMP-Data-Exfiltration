@@ -38,7 +38,7 @@ to the script, and it will automatically convert our data into "HEXADECIMAL" and
 ❯ sudo python3 icmp_exfiltration.py
 
 ┃  [!] Usage icmp_exfiltration.py -i <Adaptor name / IP Address> -m <Mode> -f <Filename>   
-――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
+――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 ┃  [-i] Network Adaptor name
 
