@@ -55,6 +55,8 @@ def data_parser(packet_info):
     if packet_info.haslayer(ICMP):
         if packet_info[ICMP].type == 8:
             byte_data = packet_info['ICMP'].load[-4:].decode('utf-8', errors="ignore")
+            if "4567" in byte_data:
+                byte_data = str(byte_data).replace("4567", "")
             print(byte_data, flush=True, end='')
             a = open(f'{sys.argv[6]}.txt', 'a')
             a.write(byte_data)
