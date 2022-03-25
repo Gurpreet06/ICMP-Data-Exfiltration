@@ -122,7 +122,7 @@ def check_permisson():
             print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
                   f"{Fore.BLUE + '  Saving data to file'}")
             print(Fore.WHITE)  # To avoid leaving the terminal with colors.
-            sniff(iface=f'{sys.argv[2]}', prn=data_parser)
+            sniff(iface=f'{sys.argv[2]}', prn=data_parser, filter="icmp")
     elif sys.argv[4] == 'send':
         # check for the ip address.
         try:
