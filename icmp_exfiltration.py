@@ -77,7 +77,7 @@ def send_file(ip_address, file_name):
     subprocess.run([file_load], shell=True)
     with open(f"{sys.argv[6]}", "r") as f:
         get_file_length = len(f.readlines())
-        calc_progress_bar = get_file_length / 3
+        calc_progress_bar = get_file_length / 2
         progess_bar = 0
         print()
         for i in tqdm(range(int(calc_progress_bar))):
