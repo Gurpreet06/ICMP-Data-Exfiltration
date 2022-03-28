@@ -1,4 +1,4 @@
-# ICMP-Data-Exfiltration
+# ICMP-Data-Exfiltration (Linux Only)
 
 This program is used to send data over the network within "ICMP Packets", with the help of the "PING" command.
 we can send any type of file over the network between two hosts with the help of this script.
