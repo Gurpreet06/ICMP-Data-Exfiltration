@@ -8,6 +8,7 @@ import sys
 import time
 import re
 import ipaddress
+import pyfiglet
 
 
 def ctrl_c(signum, frame):
@@ -31,6 +32,22 @@ def get_colours(text, color):
     elif color == "green":
         red_color = Fore.GREEN + text
         print(red_color)
+
+
+# Script Banner
+def script_banner():
+    script_name = pyfiglet.figlet_format("ICMP \n~ EXFILTRATION", font="slant")
+    owner_name = 'By: Gurpreet ~ Singh (Gurpreet06)'
+    owner = f"""
+    \t┌─────────────────────────────────────────┐
+    \t│                                         │          
+    \t│ {Fore.BLUE + owner_name}       │     
+    \t│                                         │  
+    \t└─────────────────────────────────────────┘
+    """
+
+    print('\n', Fore.YELLOW + script_name, end="")
+    print(owner)
 
 
 def menu_panel():
@@ -152,6 +169,7 @@ def check_permisson():
 
 
 def check_parms():
+    script_banner()
     if len(sys.argv) > 1:
         if sys.argv[1] == "-h":
             menu_panel()
