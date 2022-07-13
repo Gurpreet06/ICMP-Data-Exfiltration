@@ -10,6 +10,8 @@ import re
 import ipaddress
 import pyfiglet
 import argparse
+from multiprocessing import Process
+import netifaces
 
 
 def ctrl_c(signum, frame):
@@ -72,53 +74,70 @@ def menu_panel():
 
 def data_parser(packet_info):
     if packet_info.haslayer(ICMP):
-        if packet_info[ICMP].type == 8:
-            byte_data = packet_info['ICMP'].load[-4:].decode('utf-8', errors="ignore")
-            # Avoid ICMP normal ping packets.
-            if "4567" in byte_data:
-                byte_data = str(byte_data).replace("4567", "")
-
-            if "FI" in byte_data:
+        if packet_info[ICMP].type == 8 and packet_info[ICMP].id == 12312 and packet_info[Raw].load:
+            byte_data = packet_info[Raw].load.decode('utf-8', errors="ignore").replace('\n', '')
+            data = bytes.fromhex(byte_data)
+            if "FIEOF" in data.decode().strip().rstrip():
                 byte_data = str(byte_data).replace("FI", "")
                 print(f"\n\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
                       f"{Fore.BLUE + '  File received successfully'}")
                 exit()
-
-            print(byte_data, flush=True, end='')
+            print(data.decode().strip().rstrip())
             a = open(f'{sys.argv[6]}.txt', 'a')
-            a.write(byte_data)
-
+            a.write(data.decode())
             a.close()
+
+
+def progressBar(final):
+    print()
+    for i in tqdm(range(1, final)):
+        sys.stdout.write("\033[F")
+    print()
 
 
 def send_file(ip_address, file_name):
     try:
-        open(file_name, 'rb').readlines()
+        encodedFile = []
+        file = open(file_name, 'rb').readlines()
+        for fileData in file:
+            encodedFile.append(fileData.decode().encode().hex())
+        cnt = len(encodedFile) - 10
+
+        processBar = Process(target=progressBar, args=(cnt,))
+
+        print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
+              f"{Fore.BLUE + '  Trying to send file..'}")
+
+        processBar.start()
+        for encodedData in encodedFile:
+            payload = (IP(dst=ip_address, ttl=128) / ICMP(type=8, id=12312) / Raw(load=encodedData))
+            sr(payload, timeout=0, verbose=0)
+        processBar.join()
+        print()
+        print(f"\n\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
+              f"{Fore.BLUE + '  File sent successfully'}")
+
+        # Send exit msg
+        processBar.terminate()
+        time.sleep(1)
+        exit_text = "FIEOF".encode().hex()
+        payload = (IP(dst=ip_address, ttl=128) / ICMP(type=8, id=12312) / Raw(load=exit_text))
+        sr(payload, timeout=0, verbose=0)
+        print(Fore.WHITE)
     except FileNotFoundError:
         print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
               f"{Fore.RED + ' Indicate file dosent exist, check file name.'}")
         print(Fore.WHITE)  # To avoid leaving the terminal with colours.
         exit()
-    file_load = f"""xxd -p -c 4 {file_name} | while read line; do ping -c 1 -p $line {ip_address}; sleep .0002s; done >/dev/null 2>&1 &"""
-    print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
-          f"{Fore.BLUE + '  Trying to send file..'}")
-    subprocess.run([file_load], shell=True)
-    with open(f"{sys.argv[6]}", "r") as f:
-        get_file_length = len(f.readlines())
-        calc_progress_bar = get_file_length / 2
-        progess_bar = 0
-        print()
-        for i in tqdm(range(int(calc_progress_bar))):
-            time.sleep(.03)
-            progess_bar += i
-    print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
-          f"{Fore.BLUE + '  File sent successfully'}")
-    # Send exit msg
-    time.sleep(1)
-    exit_text = "FI".encode().hex()
-    send_exit_msg = f"""ping -c 1 -p {exit_text} {ip_address} """
-    subprocess.run([send_exit_msg], shell=True, stdout=subprocess.DEVNULL)
-    print(Fore.WHITE)
+
+
+def checkInterface(arrayInt, userInt):
+    if str(userInt) not in arrayInt:
+        print(
+                f"\n{Fore.RED + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + '] '}"
+                f"{Fore.YELLOW + 'Invalid Network Interface name'}")
+        return False
+    return True
 
 
 def check_permisson(ip, mode, filename):
@@ -128,19 +147,9 @@ def check_permisson(ip, mode, filename):
                   f"{Fore.RED + ' Run this script with administrator privileges.'}")
             exit()
 
-        check_interface_exist = subprocess.check_output(
-            "ip a | grep '%s' | awk '{print $2}' | grep"
-            " '%s' | awk '{print $1}' FS=':'" % (
-                ip, ip),
-            shell=True).decode().strip()
-
-        if ip != check_interface_exist:
-            print(
-                f"\n{Fore.RED + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + '] '}"
-                f"{Fore.YELLOW + 'Invalid Network Interface name'}")
-            get_inters = subprocess.check_output("ls /sys/class/net",
-                                                 shell=True).decode().strip()
-            save_all = get_inters.split('\n')
+        save_all = netifaces.interfaces()
+        checkInt = checkInterface(save_all, ip)
+        if not checkInt:
             print(f"\n{Fore.BLUE + '┃'} {Fore.YELLOW + ' Available interfaces are:'}\n")
             cnt = 1
             for i in save_all:
@@ -198,6 +207,7 @@ def check_parms():
                             help='File name to save data or to send.',
                             )
         args = parser.parse_args()
+        sys.argv[6] = args.file
         if "send" in args.mode or "recv" in args.mode:
             check_permisson(args.ip, args.mode, args.file)  # check for the admin privs
         else:
