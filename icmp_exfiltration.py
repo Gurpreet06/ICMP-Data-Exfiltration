@@ -8,7 +8,6 @@ import sys
 import time
 import re
 import ipaddress
-import pyfiglet
 import argparse
 from multiprocessing import Process
 import netifaces
@@ -46,7 +45,6 @@ ____  _/_  ____/__   |/  /__  __ \    ___  ____/_  |/ /__  ____/___  _/__  /___ 
 __/ /  / /___  _  /  / / _  ____/     _  /___  _    | _  __/   __/ /  _  /___  /   _  _, _/_  ___ |  /   __/ /  / /_/ /_  /|  /  
 /___/  \____/  /_/  /_/  /_/          /_____/  /_/|_| /_/      /___/  /_____/_/    /_/ |_| /_/  |_/_/    /___/  \____/ /_/ |_/
     """
-    script_name = pyfiglet.figlet_format("ICMP \n~ EXFILTRATION", font="slant")
     owner_name = 'By: Gurpreet ~ Singh (Gurpreet06)'
 
     print(Fore.YELLOW + logo, end="")
